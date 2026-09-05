@@ -5,5 +5,11 @@
   "description": "Improve your prompts while using AI.",
   "action": {
     "default_popup": "index.html"
+  },
+"content_scripts": [
+  {
+    "matches": ["https://claude.ai/*"],
+    "js": ["content.js"]
   }
+]
 }
