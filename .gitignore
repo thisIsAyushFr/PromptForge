@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # Backend runtime files
 Backend/run.txt
+Platforms/temp
+Platforms/Claude/temp
