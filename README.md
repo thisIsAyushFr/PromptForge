@@ -1,18 +1,43 @@
 # PromptForge
 
-PromptForge is a browser extension that helps improve prompts before sending them to AI.
+PromptForge is an open-source browser extension that improves prompts before they are sent to AI platforms.
 
-## Current MVP
+The goal is simple:
 
-PromptForge currently supports:
+**Write a prompt → Improve it → Get better instructions → Get better results**
 
-- Claude as the target AI platform
+PromptForge is being built as a platform-based project, where each AI platform can have its own integration, UI theme, prompt detection, and platform-specific behavior.
+
+## Current Status
+
+### Claude
+
+Claude is currently the first fully working PromptForge integration.
+
+It supports:
+
 - Automatic prompt detection from the Claude chat input
 - Gemini-powered prompt optimization
-- Copy optimized prompts directly to the clipboard
+- Structured optimized prompts
+- Editable optimized prompts
+- One-click copying to the clipboard
 - Light and dark mode
-- Claude, ChatGPT, and Gemini selector UI
-- ChatGPT and Gemini support marked as coming soon
+- Claude-specific PromptForge UI
+- AI platform selector
+
+### Coming Soon
+
+PromptForge is planned to support additional AI platforms, including:
+
+- ChatGPT
+- Gemini
+- Grok
+- DeepSeek
+- Perplexity
+- Lovable
+- And more
+
+The project is intended to be open-source, so contributors can help build integrations for different AI platforms.
 
 ## Tech Stack
 
@@ -35,16 +60,22 @@ PromptForge currently supports:
 
 ```text
 PromptForge/
-├── Extension/
-│   ├── public/
-│   └── src/
-│       ├── App.tsx
-│       ├── content.ts
-│       └── gemini.ts
+├── Platforms/
+│   └── Claude/
+│       └── Extension/
+│           ├── public/
+│           ├── src/
+│           │   ├── App.tsx
+│           │   └── content.ts
+│           ├── index.html
+│           ├── package.json
+│           └── vite.config.ts
 │
 ├── Backend/
 │   ├── server.ts
 │   ├── package.json
 │   └── package-lock.json
 │
-└── README.md
+├── README.md
+├── LICENSE
+└── .gitignore
