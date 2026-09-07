@@ -23,21 +23,16 @@ const attachEditorListener = (): void => {
 
   currentEditor = editor
 
-    editor.addEventListener('input', () => {
+  editor.addEventListener('input', () => {
     const prompt = getClaudePrompt()
 
-    console.log("Current Claude prompt:", prompt)
+    console.log('Current Claude prompt:', prompt)
+  })
 
-    chrome.runtime.sendMessage({
-        type: 'PROMPT_CHANGED',
-        prompt,
-    })
-    })
-
-  console.log("PromptForge attached to Claude editor")
+  console.log('PromptForge attached to Claude editor')
 }
 
-console.log("PromptForge content script loaded")
+console.log('PromptForge content script loaded')
 
 attachEditorListener()
 
@@ -49,10 +44,13 @@ observer.observe(document.body, {
   childList: true,
   subtree: true,
 })
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === 'GET_PROMPT') {
-    sendResponse({
-      prompt: getClaudePrompt(),
-    })
+
+chrome.runtime.onMessage.addListener(
+  (message, _sender, sendResponse) => {
+    if (message.type === 'GET_PROMPT') {
+      sendResponse({
+        prompt: getClaudePrompt(),
+      })
+    }
   }
-})
+)

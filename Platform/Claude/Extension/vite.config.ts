@@ -5,16 +5,13 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-
   base: './',
-
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
         content: resolve(__dirname, 'src/content.ts'),
       },
-
       output: {
         entryFileNames: '[name].js',
       },
