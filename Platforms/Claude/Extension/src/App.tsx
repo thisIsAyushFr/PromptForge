@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
+import AISelection from './AISelection'
 
 function App() {
     const [prompt, setPrompt] = useState('')
+    const [showAISelection, setShowAISelection] = useState(false)
     const [optimizedPrompt, setOptimizedPrompt] = useState('')
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [copied, setCopied] = useState(false)
     const [error, setError] = useState('')
     const [errorType, setErrorType] = useState<'empty' | 'optimization' | 'copy' | ''>('')
     const [selectedAI, setSelectedAI] = useState('Claude')
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [showResult, setShowResult] = useState(false)
     const [isDarkMode, setIsDarkMode] = useState(() => {
         return localStorage.getItem('promptforge-theme') === 'dark'
@@ -82,7 +83,6 @@ function App() {
 
     const selectAI = (ai: string) => {
         setSelectedAI(ai)
-        setIsDropdownOpen(false)
         setOptimizedPrompt('')
         setShowResult(false)
         setError('')
@@ -200,7 +200,23 @@ function App() {
             errorText: 'text-[#9b4d38]',
             successText: 'text-[#6f806f]',
         }
-
+        if (showAISelection) {
+            return (
+                <AISelection
+                    selectedAI={selectedAI}
+                    onSelect={(ai) => {
+                        setSelectedAI(ai)
+                        setShowAISelection(false)
+                        setOptimizedPrompt('')
+                        setShowResult(false)
+                        setError('')
+                        setErrorType('')
+                        setCopied(false)
+                    }}
+                    onBack={() => setShowAISelection(false)}
+                />
+            )
+        }
     return (
         <div
             className={`min-h-screen w-80 p-3.5 transition-colors duration-300 ${theme.page}`}
@@ -238,91 +254,16 @@ function App() {
                         PROMPT IMPROVEMENT TOOL
                     </p>
 
-                    <div className="relative mt-2.5">
-                        <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className={`flex items-center gap-1.5 rounded-full border border-[#c96d4c] bg-[#d97757] px-3.5 py-1.5 text-[9px] font-black tracking-wider text-white shadow-[1px_2px_4px_rgba(80,40,20,0.22)] transition-all duration-150 ${
-                                isDropdownOpen
-                                    ? 'translate-y-[1px] shadow-[inset_1px_1px_3px_rgba(80,40,20,0.2)]'
-                                    : 'hover:-translate-y-[1px] hover:bg-[#cf6d4e]'
-                            }`}
-                        >
-                            <span>{selectedAI.toUpperCase()}</span>
+                    <button
+                        onClick={() => setShowAISelection(true)}
+                        className="flex items-center gap-1.5 rounded-full border border-[#c96d4c] bg-[#d97757] px-3.5 py-1.5 text-[9px] font-black tracking-wider text-white shadow-[1px_2px_4px_rgba(80,40,20,0.22)] transition-all duration-150 hover:-translate-y-[1px] hover:bg-[#cf6d4e] active:translate-y-[1px]"
+                    >
+                        <span>{selectedAI.toUpperCase()}</span>
 
-                            <span
-                                className={`text-[7px] transition-transform duration-200 ${
-                                    isDropdownOpen ? 'rotate-180' : ''
-                                }`}
-                            >
-                                ▼
-                            </span>
-                        </button>
-
-                        {isDropdownOpen && (
-                            <div
-                                className={`absolute left-0 top-full z-50 mt-2 w-36 origin-top-left overflow-hidden rounded-xl border shadow-[3px_4px_10px_rgba(0,0,0,0.25)] animate-[fadeIn_150ms_ease-out] ${theme.dropdown}`}
-                            >
-                                <button
-                                    onClick={() => selectAI('Claude')}
-                                    className={`flex w-full items-center justify-between px-3 py-2.5 text-left transition-colors duration-100 ${theme.dropdownHover}`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-2 w-2 rounded-full bg-[#d97757]" />
-
-                                        <span
-                                            className={`text-xs font-bold ${theme.heading}`}
-                                        >
-                                            Claude
-                                        </span>
-                                    </div>
-
-                                    {selectedAI === 'Claude' && (
-                                        <span className="text-xs font-black text-[#d97757]">
-                                            ✓
-                                        </span>
-                                    )}
-                                </button>
-
-                                <button
-                                    onClick={() => selectAI('ChatGPT')}
-                                    className={`flex w-full items-center justify-between border-t px-3 py-2.5 text-left transition-colors duration-100 ${theme.divider} ${theme.dropdownHover}`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-2 w-2 rounded-full bg-[#8c867f]" />
-
-                                        <span
-                                            className={`text-xs font-bold ${theme.heading}`}
-                                        >
-                                            ChatGPT
-                                        </span>
-                                    </div>
-
-                                    <span className="rounded-full bg-[#e7e0d9] px-1.5 py-0.5 text-[7px] font-black tracking-wide text-[#91867d]">
-                                        SOON
-                                    </span>
-                                </button>
-
-                                <button
-                                    onClick={() => selectAI('Gemini')}
-                                    className={`flex w-full items-center justify-between border-t px-3 py-2.5 text-left transition-colors duration-100 ${theme.divider} ${theme.dropdownHover}`}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <span className="h-2 w-2 rounded-full bg-[#8c867f]" />
-
-                                        <span
-                                            className={`text-xs font-bold ${theme.heading}`}
-                                        >
-                                            Gemini
-                                        </span>
-                                    </div>
-
-                                    <span className="rounded-full bg-[#e7e0d9] px-1.5 py-0.5 text-[7px] font-black tracking-wide text-[#91867d]">
-                                        SOON
-                                    </span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                        <span className="text-[7px]">
+                            ▼
+                        </span>
+                    </button>
                 </div>
 
                 {isComingSoon ? (
