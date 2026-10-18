@@ -1,21 +1,36 @@
 let currentEditor: HTMLElement | null = null
 
-const getClaudePrompt = (): string => {
-  const editor = document.querySelector(
-    '[data-testid="chat-input"]'
-  ) as HTMLElement | null
+const isGemini = (): boolean => location.hostname === 'gemini.google.com'
+
+const platformName = (): string => (isGemini() ? 'Gemini' : 'Claude')
+
+const CLAUDE_SELECTOR = '[data-testid="chat-input"]'
+
+const GEMINI_SELECTOR = [
+  'rich-textarea .ql-editor[contenteditable="true"]',
+  'div.ql-editor[contenteditable="true"]',
+  'div[contenteditable="true"][role="textbox"]',
+].join(', ')
+
+const getEditor = (): HTMLElement | null =>
+  document.querySelector<HTMLElement>(
+    isGemini() ? GEMINI_SELECTOR : CLAUDE_SELECTOR
+  )
+
+const getPrompt = (): string => {
+  const editor = getEditor()
 
   if (!editor) {
     return ''
   }
 
-  return editor.innerText
+  const text = editor.innerText
+
+  return isGemini() ? text.trim() : text
 }
 
 const attachEditorListener = (): void => {
-  const editor = document.querySelector(
-    '[data-testid="chat-input"]'
-  ) as HTMLElement | null
+  const editor = getEditor()
 
   if (!editor || editor === currentEditor) {
     return
@@ -24,12 +39,10 @@ const attachEditorListener = (): void => {
   currentEditor = editor
 
   editor.addEventListener('input', () => {
-    const prompt = getClaudePrompt()
-
-    console.log('Current Claude prompt:', prompt)
+    console.log(`Current ${platformName()} prompt:`, getPrompt())
   })
 
-  console.log('PromptForge attached to Claude editor')
+  console.log(`PromptForge attached to ${platformName()} editor`)
 }
 
 console.log('PromptForge content script loaded')
@@ -49,8 +62,11 @@ chrome.runtime.onMessage.addListener(
   (message, _sender, sendResponse) => {
     if (message.type === 'GET_PROMPT') {
       sendResponse({
-        prompt: getClaudePrompt(),
+        platform: platformName(),
+        prompt: getPrompt(),
       })
     }
   }
 )
+
+export {}
